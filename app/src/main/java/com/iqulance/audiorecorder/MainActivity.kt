@@ -156,9 +156,9 @@ class MainActivity : AppCompatActivity() {
         fisToFinal =  FileInputStream(mergedFile);
 
         try{
-            for (mp3File in files) {
-                if (!mp3File.exists()) continue
-                val fisSong = FileInputStream(mp3File)
+            for (i in files.indices) {
+//                if (!i.exists()) continue
+                val fisSong = FileInputStream(files[i])
                 val sis = SequenceInputStream(fisToFinal, fisSong)
                 val buf = ByteArray(1024)
                 try {
