@@ -156,25 +156,17 @@ class MainActivity : AppCompatActivity() {
         fisToFinal =  FileInputStream(mergedFile);
 
         try{
-            for (i in files.indices) {
-//                if (!i.exists()) continue
-                val fisSong = FileInputStream(files[i])
-                val sis = SequenceInputStream(fisToFinal, fisSong)
-                val buf = ByteArray(1024)
-                try {
-                    var readNum: Int
-                    while (fisSong!!.read(buf).also { readNum = it } != -1) {
-                        fos.write(buf, 0, readNum)
-                    }
-                } finally {
-                    if (fisSong != null) {
-                        fisSong.close()
-                    }
-                    if (sis != null) {
-                        sis.close()
-                    }
-                }
-            }
+
+            var countFiles = files.size
+
+            var countWrite =0
+
+
+                val  mergedFile=dir!!.absolutePath + "/MergerAudio"+countFile+".mp3"
+
+
+                writeData(mergedFile,countFile)
+
 
         }
         catch (e:IOException) {
@@ -198,6 +190,52 @@ class MainActivity : AppCompatActivity() {
 
 
         return mergedFile
+    }
+
+    private  fun writeData(
+        mergedFile: String,
+        countFile: Int,
+    ) {
+
+        val  directoryPath=dir!!.absolutePath
+
+        val directory: File = File(directoryPath)
+        val files = directory.listFiles()
+        val arrayAudioFile : ArrayList<FileInputStream> = arrayListOf()
+        Log.d("Files", "Size: " + files.size.toString())
+
+        var temp: Int
+
+        val writeFileIndex = files!![countWrite]
+
+        val fistream2:  FileInputStream  =  FileInputStream(writeFileIndex);//second source file
+
+        val fostream :  FileOutputStream  =  FileOutputStream(mergedFile,true);
+        val  outStreamWriter =  OutputStreamWriter(fostream);
+
+        val fistream1: FileInputStream? = FileInputStream(mergedFile) // first source file try { fistream1 = new FileInputStream(wavFile1);
+
+        val sistream :  SequenceInputStream  =  SequenceInputStream(fistream1, fistream2);
+
+        while (sistream!!.read().also { temp = it } != -1) {
+            // System.out.print( (char) temp );
+                // to print at DOS prompt
+            fostream.write(temp)
+             // to write to file
+        }
+        Log.e("Result", "Done")
+        fostream.close();
+        sistream.close();
+        fistream1!!.close();
+        fistream2.close();
+
+        countWrite=countWrite+1
+
+        if(countWrite<files.size){
+//            val  mergedFile=dir!!.absolutePath + "/MergerAudio"+countFile+".mp3"
+
+            writeData(mergedFile,countFile)
+        }
     }
 
     private fun createAudioFile() {
@@ -287,5 +325,6 @@ class MainActivity : AppCompatActivity() {
         private  var audioFile : File ?= null
         private  var audioParentFile : File  ?= null
         const val REQUEST_AUDIO_PERMISSION_CODE = 1
+        var countWrite =0
     }
 }
